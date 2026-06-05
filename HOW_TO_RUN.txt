@@ -1,0 +1,165 @@
+╔══════════════════════════════════════════════════════════════════╗
+║     OralScan AI — Oral Cancer Detection (U-Net Segmentation)    ║
+║                    SETUP & RUN GUIDE                            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ FOLDER STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+oral_cancer_detection/
+│
+├── dataset/
+│   ├── cancer/
+│   │   ├── images/          ← PUT cancer oral images here (.jpg/.png)
+│   │   └── masks/           ← PUT corresponding binary masks here (.png)
+│   │                           White (255) = tumor | Black (0) = background
+│   └── normal/
+│       ├── images/          ← PUT healthy oral images here (.jpg/.png)
+│       └── masks/           ← All-black mask images (auto-generated)
+│
+├── model/
+│   ├── unet_model.py        ← U-Net + ResNet50 architecture + metrics
+│   └── best_model.h5        ← Saved after training (auto-created)
+│
+├── templates/
+│   └── index.html           ← Medical dashboard web UI
+│
+├── static/
+│   ├── style.css            ← Dashboard styling
+│   └── script.js            ← Frontend logic
+│
+├── train.py                 ← Training script
+├── app.py                   ← Flask web app
+├── generate_normal_masks.py ← Utility: auto-create black masks for normal images
+├── requirements.txt
+└── HOW_TO_RUN.txt           ← This file
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ STEP 1 — INSTALL DEPENDENCIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  pip install -r requirements.txt
+
+  Requires Python 3.9 or 3.10.
+  For GPU training: install tensorflow-gpu instead of tensorflow.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ STEP 2 — ADD YOUR DATASET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  CANCER images + masks
+  ─────────────────────
+  1. Copy your oral cancer images to:
+       dataset/cancer/images/
+     Example: patient_001.jpg, patient_002.jpg …
+
+  2. Copy corresponding binary mask images to:
+       dataset/cancer/masks/
+     Mask rules:
+       - Same filename as the image (use .png extension)
+       - White pixels (255) = cancerous / tumor region
+       - Black pixels (0)   = healthy background
+     Example: patient_001.png, patient_002.png …
+
+  NORMAL images
+  ─────────────
+  1. Copy healthy oral images to:
+       dataset/normal/images/
+
+  2. Auto-generate all-black masks by running:
+       python generate_normal_masks.py
+     This creates a black mask for every image in normal/images/
+
+  NAMING RULE
+  ───────────
+  Image and mask must share the same base filename:
+    cancer/images/abc.jpg  ->  cancer/masks/abc.png    ✓
+    normal/images/xyz.png  ->  normal/masks/xyz.png    ✓
+
+  SAMPLE DATA
+  ───────────
+  5 synthetic sample images per category are already included
+  so you can test the pipeline immediately.
+  Replace them with real clinical images for actual training.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ STEP 3 — TRAIN THE MODEL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Recommended (ResNet50 encoder, pretrained ImageNet):
+    python train.py --use_resnet True --epochs 30 --batch_size 8
+
+  Lightweight (vanilla U-Net, no pretrained weights):
+    python train.py --use_resnet False --epochs 50 --batch_size 8
+
+  Output files created after training:
+    model/best_model.h5       ← best checkpoint (val Dice)
+    training_curves.png       ← accuracy / loss / dice / IoU plots
+    sample_predictions.png    ← original | mask | prediction comparison
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ STEP 4 — LAUNCH WEB APP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  python app.py
+
+  Open in browser:  http://localhost:5000
+
+  If model/best_model.h5 does not exist yet, the app runs in
+  Demo Mode and returns a synthetic example prediction.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ WEB APP — HOW TO USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Upload an oral image (drag-drop or browse)
+  2. Click "Analyze Image"
+  3. View results:
+       • Original image
+       • Segmentation mask (hot colormap)
+       • Red overlay on cancer region
+       • "Cancer Region Detected: XX.XX%"
+       • Severity label (None / Low / Moderate / High)
+       • Model metrics (Dice, IoU, Accuracy)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ MODEL ARCHITECTURE SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Encoder : ResNet50 (ImageNet pretrained) or custom conv blocks
+  Decoder : 4 upsampling stages with transposed convolutions
+  Skip     : Concatenate encoder feature maps at each decoder stage
+  Loss     : Binary Cross-Entropy + Dice Loss
+  Metrics  : Accuracy · Dice Coefficient · IoU (Jaccard)
+  Optimizer: Adam (lr=1e-4)
+  Input    : 224 × 224 × 3  (RGB, normalised 0-1)
+  Output   : 224 × 224 × 1  (sigmoid probability map)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  • "No data found"
+      -> Check dataset/ folder names (cancer, normal — lowercase)
+      -> Confirm images are .jpg / .jpeg / .png
+      -> Confirm mask filenames match image filenames
+
+  • Memory error during training
+      -> Reduce --batch_size to 4
+
+  • Slow training (no GPU)
+      -> Use --use_resnet False for lighter model
+      -> Reduce --epochs to 20
+
+  • Flask import error
+      -> pip install flask flask-cors
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

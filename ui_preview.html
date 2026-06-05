@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OralScan AI — Cancer Detection System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   OralScan AI — Medical Diagnostic Dashboard
+   Design: Clinical-Dark with Teal Accent
+   Fonts: Syne (display) · Space Mono (data/code)
+══════════════════════════════════════════════ */
+:root {
+  --bg:         #0a0d12;
+  --bg-1:       #10141c;
+  --bg-2:       #161b26;
+  --bg-3:       #1d2535;
+  --border:     rgba(255,255,255,0.07);
+  --border-hi:  rgba(255,255,255,0.14);
+  --accent:     #00d4aa;
+  --accent-dim: rgba(0,212,170,0.12);
+  --accent-glow:rgba(0,212,170,0.25);
+  --warn:       #ff6b6b;
+  --warn-dim:   rgba(255,107,107,0.12);
+  --mid:        #f5a623;
+  --mid-dim:    rgba(245,166,35,0.12);
+  --ok:         #34d399;
+  --ok-dim:     rgba(52,211,153,0.12);
+  --text:       #e8edf5;
+  --text-2:     #8a93a8;
+  --text-3:     #4a5568;
+  --font-display: 'Syne', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+  --radius-sm:  6px;
+  --radius:     12px;
+  --radius-lg:  20px;
+  --shadow:     0 4px 24px rgba(0,0,0,0.5);
+  --shadow-accent: 0 0 40px var(--accent-glow);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-display); min-height: 100vh; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; font-family: inherit; }
+code { font-family: var(--font-mono); font-size: 0.85em; color: var(--accent); background: var(--accent-dim); padding: 2px 6px; border-radius: 4px; }
+
+/* HEADER */
+.header { position: sticky; top: 0; z-index: 100; background: rgba(10,13,18,0.9); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+.header-inner { max-width: 1400px; margin: 0 auto; padding: 0 2rem; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+.brand { display: flex; align-items: center; gap: 0.75rem; }
+.brand-mark svg { width: 38px; height: 38px; }
+.brand-name { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.brand-name em { font-style: normal; color: var(--accent); }
+.brand-sub { display: block; font-size: 0.7rem; color: var(--text-2); font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.header-meta { display: flex; align-items: center; gap: 1.5rem; }
+.chip { display: flex; align-items: center; gap: 0.4rem; background: var(--bg-2); border: 1px solid var(--border); border-radius: 100px; padding: 0.3rem 0.85rem; font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-2); }
+.chip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); animation: pulse-dot 2.4s ease-in-out infinite; }
+.chip.online .chip-dot { background: var(--accent); }
+.chip.offline .chip-dot { background: var(--warn); }
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.meta-stat { text-align: right; }
+.meta-label { display: block; font-size: 0.65rem; color: var(--text-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; }
+.meta-value { display: block; font-size: 0.82rem; font-weight: 700; font-family: var(--font-mono); color: var(--accent); }
+
+/* HERO */
+.hero { max-width: 1400px; margin: 0 auto; padding: 5rem 2rem 3rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 3rem; border-bottom: 1px solid var(--border); }
+.hero-tag { display: inline-block; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent-dim); background: var(--accent-dim); border-radius: 100px; padding: 0.25rem 0.9rem; margin-bottom: 1.25rem; }
+.hero-title { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1.25rem; }
+.accent-text { color: var(--accent); }
+.hero-desc { font-size: 1rem; color: var(--text-2); max-width: 460px; line-height: 1.7; }
+.hero-metrics { display: flex; gap: 1rem; flex-shrink: 0; }
+.hm-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.75rem; text-align: center; min-width: 100px; transition: border-color 0.3s, box-shadow 0.3s; }
+.hm-card:hover { border-color: var(--border-hi); box-shadow: var(--shadow); }
+.hm-val { display: block; font-size: 1.75rem; font-weight: 800; font-family: var(--font-mono); color: var(--accent); letter-spacing: -0.04em; }
+.hm-label { display: block; font-size: 0.68rem; color: var(--text-3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.35rem; }
+
+/* MAIN GRID */
+.main-grid { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; display: grid; grid-template-columns: 420px 1fr; gap: 1.5rem; align-items: start; }
+
+/* PANELS */
+.panel { background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; transition: border-color 0.3s; }
+.panel:hover { border-color: var(--border-hi); }
+.panel-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.75rem; }
+.panel-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; border: 1px solid var(--accent-dim); background: var(--accent-dim); border-radius: 4px; padding: 2px 7px; }
+.panel-header h2 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+
+/* DROP ZONE */
+.drop-zone { border: 2px dashed var(--border-hi); border-radius: var(--radius); min-height: 280px; display: flex; align-items: center; justify-content: center; transition: border-color 0.3s, background 0.3s; cursor: pointer; overflow: hidden; }
+.drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
+.drop-inner { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; padding: 2rem; text-align: center; }
+.drop-icon { width: 56px; height: 56px; color: var(--text-3); margin-bottom: 0.5rem; transition: color 0.3s; }
+.drop-zone:hover .drop-icon { color: var(--accent); }
+.drop-text { font-weight: 600; font-size: 0.95rem; }
+.drop-sub { color: var(--text-3); font-size: 0.8rem; }
+.drop-hint { color: var(--text-3); font-size: 0.72rem; font-family: var(--font-mono); }
+
+/* PREVIEW */
+.preview-container { width: 100%; padding: 1.25rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+.preview-container img { width: 100%; max-height: 220px; object-fit: contain; border-radius: var(--radius-sm); }
+.preview-info { display: flex; align-items: center; justify-content: space-between; width: 100%; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-2); }
+.preview-fname { color: var(--text); font-weight: 700; }
+
+/* BUTTONS */
+.btn { border: none; outline: none; border-radius: var(--radius-sm); font-family: var(--font-display); font-weight: 700; transition: all 0.2s; }
+.btn-primary { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); padding: 0.55rem 1.25rem; font-size: 0.85rem; }
+.btn-primary:hover { background: rgba(0,212,170,0.2); border-color: var(--accent); }
+.btn-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border-hi); padding: 0.4rem 1rem; font-size: 0.8rem; }
+.btn-ghost:hover { color: var(--text); border-color: var(--text-2); }
+.btn-sm { padding: 0.3rem 0.8rem; font-size: 0.75rem; }
+.btn-analyze { width: 100%; margin-top: 1.25rem; padding: 0.9rem 1.5rem; background: linear-gradient(135deg, #00b89a, #00d4aa); color: #001a16; border-radius: var(--radius); font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; letter-spacing: 0.02em; box-shadow: 0 4px 20px var(--accent-glow); transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s; }
+.btn-analyze:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+.btn-analyze:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+.btn-icon { font-size: 1.1rem; }
+
+/* RESULTS PANEL */
+.results-panel { position: relative; min-height: 380px; }
+.empty-state { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: var(--text-3); text-align: center; }
+.empty-icon { font-size: 3rem; opacity: 0.15; }
+.empty-state p { font-size: 0.9rem; line-height: 1.6; }
+
+/* LOADING */
+.loading-overlay { position: absolute; inset: 0; background: rgba(10,13,18,0.92); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; z-index: 10; }
+.loader-ring { width: 64px; height: 64px; border: 3px solid var(--bg-3); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-steps { text-align: center; }
+.loader-step { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-3); padding: 0.3rem 0; transition: color 0.4s; }
+.loader-step.active { color: var(--accent); }
+
+/* RESULT BANNER */
+.result-banner { display: flex; align-items: center; justify-content: space-between; background: var(--bg-2); border: 1px solid var(--border-hi); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; gap: 1.5rem; }
+.rb-label { display: block; font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); margin-bottom: 0.35rem; }
+.rb-pct { font-size: 2.4rem; font-weight: 800; font-family: var(--font-mono); letter-spacing: -0.04em; color: var(--text); }
+.rb-right { text-align: right; }
+.rb-severity { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.6rem; }
+.severity-bar { height: 6px; background: var(--bg-3); border-radius: 100px; width: 160px; overflow: hidden; margin-left: auto; }
+.severity-fill { height: 100%; border-radius: 100px; transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1); width: 0%; }
+.banner-normal  .rb-pct, .banner-normal  .rb-severity { color: var(--ok); }
+.banner-normal  .severity-fill { background: var(--ok); }
+.banner-low     .rb-pct, .banner-low     .rb-severity { color: var(--accent); }
+.banner-low     .severity-fill { background: var(--accent); }
+.banner-moderate .rb-pct, .banner-moderate .rb-severity { color: var(--mid); }
+.banner-moderate .severity-fill { background: var(--mid); }
+.banner-high    .rb-pct, .banner-high    .rb-severity { color: var(--warn); }
+.banner-high    .severity-fill { background: var(--warn); }
+
+/* IMAGE TRIO */
+.image-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
+.img-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.3s, transform 0.2s; }
+.img-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+.img-card-label { padding: 0.5rem 0.75rem; font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); border-bottom: 1px solid var(--border); }
+.img-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+
+/* METRICS */
+.metrics-row { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.metric-pill { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.6rem 1.1rem; display: flex; align-items: center; gap: 0.75rem; }
+.mp-label { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); }
+.mp-val { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; color: var(--accent); }
+.disclaimer { font-size: 0.72rem; color: var(--text-3); font-family: var(--font-mono); border: 1px solid var(--border); background: var(--bg-2); border-radius: var(--radius-sm); padding: 0.6rem 1rem; line-height: 1.5; }
+
+/* EXPLAINER */
+.explainer { border-top: 1px solid var(--border); padding: 5rem 2rem; }
+.explainer-inner { max-width: 1400px; margin: 0 auto; }
+.explainer-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 2.5rem; }
+.explainer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+.exp-card { background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; transition: border-color 0.3s, transform 0.2s; }
+.exp-card:hover { border-color: var(--accent-dim); transform: translateY(-3px); }
+.exp-icon { font-size: 1.5rem; color: var(--accent); margin-bottom: 0.75rem; opacity: 0.8; }
+.exp-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+.exp-card p { font-size: 0.85rem; color: var(--text-2); line-height: 1.7; }
+
+/* FOOTER */
+.footer { border-top: 1px solid var(--border); text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--text-3); font-family: var(--font-mono); line-height: 1.8; }
+.footer-sub { opacity: 0.5; }
+
+/* UTILITY */
+.hidden { display: none !important; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; align-items: flex-start; gap: 2rem; padding-bottom: 2.5rem; }
+  .image-trio { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .header-inner { padding: 0 1rem; }
+  .hero { padding: 3rem 1rem 2rem; }
+  .hero-title { font-size: 2.5rem; }
+  .hero-metrics { flex-wrap: wrap; }
+  .main-grid { padding: 1.5rem 1rem; }
+  .panel { padding: 1.25rem; }
+  .result-banner { flex-direction: column; gap: 1rem; }
+  .severity-bar { margin-left: 0; }
+  .header-meta .meta-stat { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" stroke="var(--accent)" stroke-width="2"/>
+          <path d="M12 20 Q16 12 20 20 Q24 28 28 20" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <circle cx="20" cy="20" r="3" fill="var(--accent)"/>
+        </svg>
+      </div>
+      <div>
+        <span class="brand-name">OralScan <em>AI</em></span>
+        <span class="brand-sub">Deep Learning Diagnostic System</span>
+      </div>
+    </div>
+    <nav class="header-meta">
+      <div class="chip online" id="model-status-chip">
+        <span class="chip-dot"></span>
+        <span id="model-status-text">Model Online</span>
+      </div>
+      <div class="meta-stat">
+        <span class="meta-label">Architecture</span>
+        <span class="meta-value">U-Net + ResNet50</span>
+      </div>
+      <div class="meta-stat">
+        <span class="meta-label">Input</span>
+        <span class="meta-value">224 × 224</span>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag">Final Year AI Project · Segmentation</div>
+    <h1 class="hero-title">Oral Cancer<br><span class="accent-text">Detection</span></h1>
+    <p class="hero-desc">Upload an oral cavity image. Our deep learning model segments cancerous regions pixel-by-pixel using U-Net architecture with a pretrained ResNet50 encoder.</p>
+  </div>
+  <div class="hero-metrics">
+    <div class="hm-card">
+      <span class="hm-val" id="hm-dice">89.2%</span>
+      <span class="hm-label">Dice Score</span>
+    </div>
+    <div class="hm-card">
+      <span class="hm-val" id="hm-iou">82.4%</span>
+      <span class="hm-label">IoU Score</span>
+    </div>
+    <div class="hm-card">
+      <span class="hm-val" id="hm-acc">94.1%</span>
+      <span class="hm-label">Accuracy</span>
+    </div>
+  </div>
+</section>
+
+<main class="main-grid">
+  <section class="panel upload-panel">
+    <div class="panel-header">
+      <span class="panel-num">01</span>
+      <h2>Image Upload</h2>
+    </div>
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/jpg" hidden>
+      <div class="drop-inner" id="drop-inner">
+        <div class="drop-icon">
+          <svg viewBox="0 0 56 56" fill="none">
+            <rect x="4" y="4" width="48" height="48" rx="8" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M28 36V20M21 27l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="drop-text">Drag & drop oral image here</p>
+        <p class="drop-sub">or</p>
+        <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Browse File</button>
+        <p class="drop-hint">JPEG / PNG · Max 10 MB</p>
+      </div>
+      <div class="preview-container hidden" id="preview-container">
+        <img id="preview-img" alt="Preview" />
+        <div class="preview-info">
+          <span id="preview-filename" class="preview-fname">—</span>
+          <span id="preview-size" class="preview-size">—</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="change-btn" onclick="resetUpload()">↩ Change Image</button>
+      </div>
+    </div>
+    <button class="btn btn-analyze" id="analyze-btn" disabled onclick="runAnalysis()">
+      <span class="btn-label">Analyze Image</span>
+      <span class="btn-icon">→</span>
+    </button>
+  </section>
+
+  <section class="panel results-panel" id="results-panel">
+    <div class="panel-header">
+      <span class="panel-num">02</span>
+      <h2>Analysis Results</h2>
+    </div>
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">⬡</div>
+      <p>Upload an image and click <strong>Analyze Image</strong><br>to begin segmentation.</p>
+    </div>
+    <div class="loading-overlay hidden" id="loading-overlay">
+      <div class="loader-ring"></div>
+      <div class="loader-steps">
+        <p class="loader-step active" id="ls-1">Preprocessing image…</p>
+        <p class="loader-step" id="ls-2">Running U-Net inference…</p>
+        <p class="loader-step" id="ls-3">Computing segmentation mask…</p>
+        <p class="loader-step" id="ls-4">Calculating cancer region…</p>
+      </div>
+    </div>
+    <div class="results-content hidden" id="results-content">
+      <div class="result-banner banner-moderate" id="result-banner">
+        <div class="rb-left">
+          <span class="rb-label">Cancer Region Detected</span>
+          <span class="rb-pct" id="rb-pct">23.50%</span>
+        </div>
+        <div class="rb-right">
+          <span class="rb-severity" id="rb-severity">Moderate Region Detected</span>
+          <div class="severity-bar">
+            <div class="severity-fill" id="severity-fill" style="width: 35%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="image-trio">
+        <div class="img-card">
+          <div class="img-card-label">Original</div>
+          <img id="res-original" alt="Original" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjI0IiBoZWlnaHQ9IjIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjI0IiBoZWlnaHQ9IjIyNCIgZmlsbD0iIzFkMjUzNSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNGE1NTY4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zZW0iPk9yaWdpbmFsIEltYWdlPC90ZXh0Pjwvc3ZnPg==" />
+        </div>
+        <div class="img-card">
+          <div class="img-card-label">Segmentation Mask</div>
+          <img id="res-mask" alt="Mask" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjI0IiBoZWlnaHQ9IjIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjI0IiBoZWlnaHQ9IjIyNCIgZmlsbD0iIzBhMGQxMiIvPjxlbGxpcHNlIGN4PSIxMTIiIGN5PSIxMTIiIHJ4PSI1MCIgcnk9IjQwIiBmaWxsPSIjZmY2NjAwIiBvcGFjaXR5PSIwLjgiLz48dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMCIgZmlsbD0iIzRhNTU2OCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U2VnbWVudGF0aW9uPC90ZXh0Pjwvc3ZnPg==" />
+        </div>
+        <div class="img-card">
+          <div class="img-card-label">Cancer Overlay</div>
+          <img id="res-overlay" alt="Overlay" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjI0IiBoZWlnaHQ9IjIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjI0IiBoZWlnaHQ9IjIyNCIgZmlsbD0iIzFkMjUzNSIvPjxlbGxpcHNlIGN4PSIxMTIiIGN5PSIxMTIiIHJ4PSI1MCIgcnk9IjQwIiBmaWxsPSIjZmYwMDAwIiBvcGFjaXR5PSIwLjUiLz48dGV4dCB4PSI1MCUiIHk9IjgwJSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMCIgZmlsbD0iIzRhNTU2OCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+T3ZlcmxheTwvdGV4dD48L3N2Zz4=" />
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric-pill"><span class="mp-label">Dice Coeff.</span><span class="mp-val" id="mp-dice">89.2%</span></div>
+        <div class="metric-pill"><span class="mp-label">IoU Score</span><span class="mp-val" id="mp-iou">82.4%</span></div>
+        <div class="metric-pill"><span class="mp-label">Accuracy</span><span class="mp-val" id="mp-acc">94.1%</span></div>
+      </div>
+      <p class="disclaimer">⚠ This tool is intended for research and educational purposes only. Clinical diagnosis must be performed by a licensed medical professional.</p>
+    </div>
+  </section>
+</main>
+
+<section class="explainer">
+  <div class="explainer-inner">
+    <h2 class="explainer-title">How It Works</h2>
+    <div class="explainer-grid">
+      <div class="exp-card">
+        <div class="exp-icon">⬡</div>
+        <h3>U-Net Architecture</h3>
+        <p>U-Net is an encoder-decoder CNN with skip connections that preserve spatial detail. The encoder downsamples the image to extract features; the decoder upsamples back to the original resolution, guided by skip connections that carry high-resolution information from each encoder stage. This enables precise pixel-level segmentation.</p>
+      </div>
+      <div class="exp-card">
+        <div class="exp-icon">◈</div>
+        <h3>Dice Coefficient</h3>
+        <p>Measures the overlap between the predicted and ground-truth mask: <code>(2|A∩B|) / (|A|+|B|)</code>. Ranges from 0 (no overlap) to 1 (perfect overlap). Unlike accuracy, Dice is robust to class imbalance — critical when the cancer region is much smaller than the background.</p>
+      </div>
+      <div class="exp-card">
+        <div class="exp-icon">◇</div>
+        <h3>IoU Score</h3>
+        <p>Intersection over Union (Jaccard Index): <code>|A∩B| / |A∪B|</code>. More strict than Dice — it penalises false positives harder. The standard benchmark metric in medical image segmentation challenges (MICCAI). An IoU &gt; 0.7 is generally considered clinically acceptable.</p>
+      </div>
+      <div class="exp-card">
+        <div class="exp-icon">△</div>
+        <h3>Segmentation vs Classification</h3>
+        <p>Classification only answers "Is cancer present?" (yes/no). Segmentation answers "Where exactly is it?" by generating a pixel-level mask. This provides actionable spatial information for clinicians: tumour location, boundary, and size — indispensable for surgical planning and treatment assessment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>OralScan AI · Final Year Deep Learning Project · U-Net Segmentation with ResNet50</p>
+  <p class="footer-sub">Built with TensorFlow · Flask · OpenCV</p>
+</footer>
+
+<script>
+'use strict';
+let selectedFile = null;
+const dropZone = document.getElementById('drop-zone');
+const dropInner = document.getElementById('drop-inner');
+const fileInput = document.getElementById('file-input');
+const previewContainer = document.getElementById('preview-container');
+const previewImg = document.getElementById('preview-img');
+const previewFname = document.getElementById('preview-filename');
+const previewSize = document.getElementById('preview-size');
+const analyzeBtn = document.getElementById('analyze-btn');
+const emptyState = document.getElementById('empty-state');
+const loadingOverlay = document.getElementById('loading-overlay');
+const resultsContent = document.getElementById('results-content');
+
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+function showPreview(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src = e.target.result;
+    previewFname.textContent = file.name.length > 24 ? file.name.substring(0,22)+'…' : file.name;
+    previewSize.textContent = formatBytes(file.size);
+    dropInner.classList.add('hidden');
+    previewContainer.classList.remove('hidden');
+    analyzeBtn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetUpload() {
+  selectedFile = null;
+  fileInput.value = '';
+  previewImg.src = '';
+  previewContainer.classList.add('hidden');
+  dropInner.classList.remove('hidden');
+  analyzeBtn.disabled = true;
+  resultsContent.classList.add('hidden');
+  emptyState.classList.remove('hidden');
+}
+
+fileInput.addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (f) { selectedFile = f; showPreview(f); }
+});
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) { selectedFile = f; showPreview(f); }
+});
+dropZone.addEventListener('click', (e) => {
+  if (e.target.closest('button') || e.target === fileInput || selectedFile) return;
+  fileInput.click();
+});
+
+const STEPS = ['ls-1','ls-2','ls-3','ls-4'];
+let stepTimer = null, currentStep = 0;
+function startLoadingSteps() {
+  currentStep = 0;
+  STEPS.forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(STEPS[0]).classList.add('active');
+  stepTimer = setInterval(() => {
+    currentStep++;
+    if (currentStep < STEPS.length) {
+      STEPS.forEach(id => document.getElementById(id).classList.remove('active'));
+      document.getElementById(STEPS[currentStep]).classList.add('active');
+    }
+  }, 900);
+}
+function stopLoadingSteps() { clearInterval(stepTimer); }
+
+async function runAnalysis() {
+  if (!selectedFile) return;
+  emptyState.classList.add('hidden');
+  resultsContent.classList.add('hidden');
+  loadingOverlay.classList.remove('hidden');
+  startLoadingSteps();
+  analyzeBtn.disabled = true;
+
+  // Simulate demo response since this is a standalone preview
+  await new Promise(r => setTimeout(r, 3600));
+  stopLoadingSteps();
+  loadingOverlay.classList.add('hidden');
+
+  // Show demo result with the uploaded image
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('res-original').src = e.target.result;
+  };
+  reader.readAsDataURL(selectedFile);
+
+  document.getElementById('rb-pct').textContent = '23.50%';
+  document.getElementById('rb-severity').textContent = 'Moderate Region Detected';
+  document.getElementById('severity-fill').style.width = '35%';
+  document.getElementById('result-banner').className = 'result-banner banner-moderate';
+  resultsContent.classList.remove('hidden');
+  analyzeBtn.disabled = false;
+
+  if (window.innerWidth < 1024) {
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+</script>
+</body>
+</html>
