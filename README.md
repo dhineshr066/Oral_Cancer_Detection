@@ -8,6 +8,7 @@ A Deep Learning-based web application for **Oral Cancer Detection and Segmentati
 https://huggingface.co/spaces/dhinesh66/Oral_Cancer_Detection
 
 Model link:
+
 https://drive.google.com/drive/folders/1IfBBj6e0riTeuOU_GsV6_P7sWqafrF9x?usp=sharing
 
 ---
